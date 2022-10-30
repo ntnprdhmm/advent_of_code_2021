@@ -8,8 +8,6 @@ grid = []
 for line in lines:
     grid.append([int(x) for x in line.strip()])
 
-flashes = 0
-
 def to_key(i, j):
     return str(i) + ':' + str(j)
 
@@ -18,7 +16,11 @@ def display_grid(grid):
         print(line)
     print('')
 
-for _ in range(100 ):
+nb_octopuses = len(grid) * len(grid[0])
+
+all_flashed = -1
+step = 1
+while all_flashed == -1:
     to_flash = Queue()
     flashed = set()
 
@@ -29,7 +31,6 @@ for _ in range(100 ):
             if grid[i][j] > 9:
                 to_flash.put((i, j))
                 flashed.add(to_key(i, j))
-                flashes += 1
 
     while not to_flash.empty():
         # flash
@@ -72,13 +73,16 @@ for _ in range(100 ):
                 if k not in flashed and grid[x][y] > 9:
                     to_flash.put((x, y))
                     flashed.add(k)
-                    flashes += 1
 
     # set flashed octopuses to 0
+
+    if nb_octopuses == len(flashed):
+        all_flashed = step
+    step += 1
 
     for octopus in flashed:
         i, j = [int(v) for v in octopus.split(':')]
         grid[i][j] = 0
 
 
-print(flashes)
+print(all_flashed)
